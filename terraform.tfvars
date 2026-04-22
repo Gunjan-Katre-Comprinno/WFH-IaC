@@ -1,0 +1,5 @@
+aws_region          = "us-east-1"
+project             = "wfh-management"
+environment         = "prod"
+domain_name         = "gouravsingh.me"
+acm_certificate_arn = "arn:aws:acm:us-east-1:707925622342:certificate/63c40f3a-6bfb-410f-8b79-5ac3d3beabed"
