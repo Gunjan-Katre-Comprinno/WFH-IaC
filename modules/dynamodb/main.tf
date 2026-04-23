@@ -1,10 +1,10 @@
 # ── WFH_Requests ─────────────────────────────────────────────────────────────
 
 resource "aws_dynamodb_table" "wfh_requests" {
-  name         = "WFH_Requests"
+  name         = "${var.environment}-wfh-requests"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "request_id"
-  tags         = var.tags
+  tags         = merge(var.tags, { tool_name = "${var.environment}-wfh-requests" })
 
   attribute {
     name = "request_id"
@@ -35,10 +35,10 @@ resource "aws_dynamodb_table" "wfh_requests" {
 # ── wfh-users ─────────────────────────────────────────────────────────────────
 
 resource "aws_dynamodb_table" "wfh_users" {
-  name         = "wfh-users"
+  name         = "${var.environment}-wfh-users"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "user_id"
-  tags         = var.tags
+  tags         = merge(var.tags, { tool_name = "${var.environment}-wfh-users" })
 
   attribute {
     name = "user_id"
@@ -64,10 +64,10 @@ resource "aws_dynamodb_table" "wfh_users" {
 # ── WFH_Audit_Log ─────────────────────────────────────────────────────────────
 
 resource "aws_dynamodb_table" "wfh_audit_log" {
-  name         = "WFH_Audit_Log"
+  name         = "${var.environment}-wfh-audit-log"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "log_id"
-  tags         = var.tags
+  tags         = merge(var.tags, { tool_name = "${var.environment}-wfh-audit-log" })
 
   attribute {
     name = "log_id"
@@ -88,10 +88,10 @@ resource "aws_dynamodb_table" "wfh_audit_log" {
 # ── WFH-Settings ──────────────────────────────────────────────────────────────
 
 resource "aws_dynamodb_table" "wfh_settings" {
-  name         = "WFH-Settings"
+  name         = "${var.environment}-wfh-settings"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "setting_id"
-  tags         = var.tags
+  tags         = merge(var.tags, { tool_name = "${var.environment}-wfh-settings" })
 
   attribute {
     name = "setting_id"

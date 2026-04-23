@@ -1,6 +1,6 @@
 resource "aws_cognito_user_pool" "main" {
-  name = "WFH-UserPool"
-  tags = var.tags
+  name = "${var.environment}-wfh-user-pool"
+  tags = merge(var.tags, { tool_name = "${var.environment}-wfh-user-pool" })
 
   username_attributes      = ["email"]
   auto_verified_attributes = []
@@ -98,12 +98,12 @@ resource "aws_cognito_user_pool" "main" {
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = "wfh-management-comprinno"
+  domain       = "prod-wfh-management-comprinno"
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
 resource "aws_cognito_user_pool_client" "web" {
-  name         = "WFH-Web"
+  name         = "${var.environment}-wfh-web-client"
   user_pool_id = aws_cognito_user_pool.main.id
 
   refresh_token_validity = 30
@@ -126,8 +126,8 @@ resource "aws_cognito_user_pool_client" "web" {
 # ── Pre-signup Lambda (restricts signup to @comprinno.net) ────────────────────
 
 resource "aws_iam_role" "presignup_lambda" {
-  name = "WFH-CognitoPreSignup-ExecutionRole"
-  tags = var.tags
+  name = "${var.environment}-wfh-cognito-presignup-role"
+  tags = merge(var.tags, { tool_name = "${var.environment}-wfh-cognito-presignup-role" })
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -145,13 +145,13 @@ resource "aws_iam_role_policy_attachment" "presignup_basic" {
 }
 
 resource "aws_lambda_function" "presignup" {
-  function_name = "CognitoPreSignupEmailValidator"
+  function_name = "${var.environment}-wfh-cognito-presignup"
   role          = aws_iam_role.presignup_lambda.arn
   handler       = "presignup_lambda.lambda_handler"
   runtime       = "python3.11"
   timeout       = 5
   memory_size   = 128
-  tags          = var.tags
+  tags          = merge(var.tags, { tool_name = "${var.environment}-wfh-cognito-presignup" })
 
   filename         = "${path.module}/presignup_lambda.zip"
   source_code_hash = filebase64sha256("${path.module}/presignup_lambda.zip")

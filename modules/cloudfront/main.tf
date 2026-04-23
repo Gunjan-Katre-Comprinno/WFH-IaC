@@ -10,7 +10,7 @@ terraform {
 # ── Origin Access Control ─────────────────────────────────────────────────────
 
 resource "aws_cloudfront_origin_access_control" "main" {
-  name                              = "wfh-frontend-oac"
+  name                              = "${var.environment}-wfh-frontend-oac"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "main" {
   price_class         = "PriceClass_All"
   aliases             = [var.domain_name]
   web_acl_id          = var.waf_web_acl_arn != "" ? var.waf_web_acl_arn : null
-  tags                = var.tags
+  tags                = merge(var.tags, { tool_name = "${var.environment}-wfh-cloudfront-distribution" })
 
   origin {
     domain_name              = var.frontend_bucket_regional_domain

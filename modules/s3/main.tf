@@ -1,8 +1,8 @@
 # ── Frontend bucket ───────────────────────────────────────────────────────────
 
 resource "aws_s3_bucket" "frontend" {
-  bucket = "wfh-management-frontend-${var.environment}-${data.aws_caller_identity.current.account_id}"
-  tags   = var.tags
+  bucket = "${var.environment}-wfh-frontend-${data.aws_caller_identity.current.account_id}"
+  tags   = merge(var.tags, { tool_name = "${var.environment}-wfh-frontend" })
 }
 
 resource "aws_s3_bucket_website_configuration" "frontend" {
@@ -47,8 +47,8 @@ resource "aws_s3_bucket_policy" "frontend" {
 # ── Backup bucket ─────────────────────────────────────────────────────────────
 
 resource "aws_s3_bucket" "backup" {
-  bucket = "wfh-dynamodb-backups-${var.environment}-${data.aws_caller_identity.current.account_id}"
-  tags   = var.tags
+  bucket = "${var.environment}-wfh-dynamodb-backups-${data.aws_caller_identity.current.account_id}"
+  tags   = merge(var.tags, { tool_name = "${var.environment}-wfh-dynamodb-backups" })
 }
 
 resource "aws_s3_bucket_public_access_block" "backup" {

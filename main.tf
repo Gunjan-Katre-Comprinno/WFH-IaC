@@ -9,9 +9,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "terraform-tfstate-wfh"
+    bucket = "prod-wfh-tfstate-bucket"
     key    = "wfh-management-system/terraform.tfstate"
-    region = "us-east-1"
+    region = "ap-south-1"
   }
 }
 
@@ -71,6 +71,14 @@ module "lambda" {
   tags        = local.common_tags
 
   lambda_exec_role_arn = module.iam.lambda_exec_role_arn
+  cognito_user_pool_id = module.cognito.user_pool_id
+  backup_bucket_name   = module.s3.backup_bucket_id
+  cors_origin          = "https://${var.domain_name}"
+  ses_sender           = var.ses_sender
+  table_wfh_requests   = module.dynamodb.wfh_requests_name
+  table_wfh_users      = module.dynamodb.wfh_users_name
+  table_wfh_audit_log  = module.dynamodb.wfh_audit_log_name
+  table_wfh_settings   = module.dynamodb.wfh_settings_name
 }
 
 module "api_gateway" {

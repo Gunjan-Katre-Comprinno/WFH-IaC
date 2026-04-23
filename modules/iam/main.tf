@@ -1,7 +1,7 @@
 resource "aws_iam_role" "lambda_exec" {
-  name        = "WFH-Lambda-ExecutionRole"
+  name        = "${var.environment}-wfh-lambda-execution-role"
   description = "Allows Lambda functions to call AWS services on your behalf."
-  tags        = var.tags
+  tags        = merge(var.tags, { tool_name = "${var.environment}-wfh-lambda-execution-role" })
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -26,9 +26,9 @@ resource "aws_iam_role_policy_attachment" "ses_full" {
 }
 
 resource "aws_iam_policy" "cognito_access" {
-  name        = "WFH-Cognito-Access"
+  name        = "${var.environment}-wfh-cognito-access"
   description = "Allows Lambda to manage Cognito users for WFH system"
-  tags        = var.tags
+  tags        = merge(var.tags, { tool_name = "${var.environment}-wfh-cognito-access" })
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -49,12 +49,13 @@ resource "aws_iam_policy" "cognito_access" {
 resource "aws_iam_role_policy_attachment" "cognito_access" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.cognito_access.arn
+
 }
 
 # ── Inline policies ───────────────────────────────────────────────────────────
 
 resource "aws_iam_role_policy" "dynamodb_crud" {
-  name = "InlinePolicy"
+  name = "${var.environment}-wfh-dynamodb-inline-policy"
   role = aws_iam_role.lambda_exec.id
 
   policy = jsonencode({
@@ -72,7 +73,9 @@ resource "aws_iam_role_policy" "dynamodb_crud" {
         ]
         Resource = [
           "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/WFH*",
-          "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/WFH*/index/*"
+          "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/WFH*/index/*",
+          "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/wfh*",
+          "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/wfh*/index/*"
         ]
       },
       {
@@ -85,7 +88,7 @@ resource "aws_iam_role_policy" "dynamodb_crud" {
 }
 
 resource "aws_iam_role_policy" "s3_backup_access" {
-  name = "S3BackupAccess"
+  name = "${var.environment}-wfh-s3-backup-access"
   role = aws_iam_role.lambda_exec.id
 
   policy = jsonencode({

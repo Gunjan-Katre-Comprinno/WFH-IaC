@@ -1,9 +1,9 @@
 resource "aws_cloudwatch_event_rule" "wfh_reminder" {
-  name                = "WFH-Reminder-Hourly"
+  name                = "${var.environment}-wfh-reminder-hourly"
   description         = "Trigger WFH reminder emails hourly"
   schedule_expression = "rate(1 hour)"
   state               = "ENABLED"
-  tags                = var.tags
+  tags                = merge(var.tags, { tool_name = "${var.environment}-wfh-reminder-hourly" })
 }
 
 resource "aws_cloudwatch_event_target" "lambda" {
@@ -13,11 +13,11 @@ resource "aws_cloudwatch_event_target" "lambda" {
 }
 
 resource "aws_cloudwatch_event_rule" "wfh_backup" {
-  name                = "WFH-DynamoDB-Backup-Daily"
+  name                = "${var.environment}-wfh-dynamodb-backup-daily"
   description         = "Trigger daily DynamoDB backup to S3"
   schedule_expression = "cron(0 1 * * ? *)"
   state               = "ENABLED"
-  tags                = var.tags
+  tags                = merge(var.tags, { tool_name = "${var.environment}-wfh-dynamodb-backup-daily" })
 }
 
 resource "aws_cloudwatch_event_target" "backup_lambda" {

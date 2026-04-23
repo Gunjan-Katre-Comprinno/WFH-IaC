@@ -21,6 +21,17 @@ variable "domain_name" {
   type        = string
 }
 
+variable "owner" {
+  description = "Owner tag value"
+  type        = string
+  default     = "akash.satpute@comprinno.net"
+}
+
+variable "ses_sender" {
+  description = "Verified SES sender email address (e.g. noreply@yourdomain.com)"
+  type        = string
+}
+
 variable "acm_certificate_arn" {
   description = "ACM certificate ARN in us-east-1 for CloudFront HTTPS"
   type        = string
